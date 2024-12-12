@@ -36,6 +36,30 @@ Available gRPC calls are:
 
 Use `proto/procman.proto` to generate the gRPC client code.
 
+### Using procman as Docker entrypoint
+
+Procman can be used as the entrypoint for a Docker container. This allows
+starting and stopping the process running in the container using gRPC calls.
+
+To use procman as the entrypoint, create a Dockerfile with the following content:
+
+```Dockerfile
+FROM golang:latest AS procman
+
+COPY certs /etc/ssl/certs
+
+RUN CGO_ENABLED=0 go install github.com/paskozdilar/procman@latest
+
+
+FROM debian:bullseye
+
+COPY --from=procman /go/bin/procman /go/bin/procman
+
+# Your build steps
+
+CMD ["/go/bin/procman", "-port=50003", "your_command", "your_command_args"]
+```
+
 ## Drawbacks
 
 Procman is a simple process manager and does not provide many features that
