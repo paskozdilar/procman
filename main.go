@@ -48,14 +48,15 @@ func main() {
 		flag.Usage()
 		os.Exit(1)
 	}
+	log.Printf("command: %s %v\n", flag.Arg(0), flag.Args()[1:])
 
 	// Create a channel for requests
 	ChReq := make(chan Request)
 
 	// Start the process manager
 	pm := &ProcMan{
-		Cmd:   os.Args[1],
-		Args:  os.Args[2:],
+		Cmd:   flag.Arg(0),
+		Args:  flag.Args()[1:],
 		ChReq: ChReq,
 	}
 	go pm.run()
