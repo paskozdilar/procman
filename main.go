@@ -44,7 +44,7 @@ func main() {
 	flag.Parse()
 
 	// Check if there are any arguments
-	if len(os.Args) == 1 {
+	if len(flag.Args()) == 0 {
 		flag.Usage()
 		os.Exit(1)
 	}
