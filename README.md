@@ -1,11 +1,12 @@
 # procman
 
-Simple gRPC-controlled process manager.
+Simple gRPC-controlled single-process manager.
 
 ## Usage
 
-Use procman to start and stop processes on a machine. The processes are started
-with a command and arguments, and can be stopped by executing an RPC call.
+Use procman to start and stop a process on a machine. The process is started
+with the given command and arguments and is restarted if it exits.
+The process can be stopped and restarted using gRPC calls.
 
 ### Starting procman
 
