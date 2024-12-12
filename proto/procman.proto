@@ -1,0 +1,18 @@
+syntax = "proto3";
+package procman;
+option go_package="./procman";
+
+import "google/protobuf/empty.proto";
+
+service ProcessManager {
+  rpc Start(StartRequest) returns (StartResponse) {}
+  rpc Stop(StopRequest) returns (StopResponse) {}
+  rpc Restart(RestartRequest) returns (RestartResponse) {}
+}
+
+message StartRequest{}
+message StartResponse{}
+message StopRequest{}
+message StopResponse{}
+message RestartRequest{}
+message RestartResponse{}
