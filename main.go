@@ -11,7 +11,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"procman/proto_gen/procman"
+	"github.com/paskozdilar/procman/proto_gen/procman"
 
 	"google.golang.org/grpc"
 )
