@@ -1,17 +1,16 @@
 # procman
 
-Simple gRPC-controlled single-process manager.
+Simple HTTP single-process manager.
 
 ## Usage
 
 Use procman to start and stop a process on a machine. The process is started
 with the given command and arguments and is restarted if it exits.
-The process can be stopped and restarted using gRPC calls.
 
 ### Starting procman
 
 To start procman, run the following command, substituting:
-- ${PORT} with the port on which procman should listen for RPC calls
+- ${PORT} with the port on which procman should listen for HTTP requests
 - ${COMMAND} with the command to run
 - ${ARGS[@]} with the list of arguments to pass to the command
 
@@ -19,46 +18,52 @@ To start procman, run the following command, substituting:
 procman --port=${PORT} ${COMMAND} ${ARGS[@]}
 ```
 
-Procman will start the command with the given arguments and listen for RPC
-calls on the specified port.
+Procman will start the command with the given arguments and listen for HTTP
+requests on the specified port.
 
 If the process exits on its own, procman will restart it.
 
 ### Using procman
 
-Procman listens for gRPC calls on the specified port.
+Procman listens for HTTP requests on the specified port.
 
-Available gRPC calls are:
-- `StartProcess`: starts a stopped process with the given command and arguments
-- `StopProcess`: stops a running process
-- `RestartProcess`: stops a running process and starts it again with the same
-  command and arguments
-
-Use `proto/procman.proto` to generate the gRPC client code.
+Available HTTP requests are:
+- `/start`: starts a stopped process with the given command and arguments
+- `/stop`: stops a running process
+- `/restart`: restarts a running process
 
 ### Using procman as Docker entrypoint
 
 Procman can be used as the entrypoint for a Docker container. This allows
-starting and stopping the process running in the container using gRPC calls.
+starting and stopping the process running in the container using HTTP requests.
 
-To use procman as the entrypoint, create a Dockerfile with the following content:
+To use procman in a Docker container, create a Dockerfile with the following
+content:
 
 ```Dockerfile
 FROM golang:latest AS procman
 
-COPY certs /etc/ssl/certs
-
-RUN CGO_ENABLED=0 go install github.com/paskozdilar/procman@latest
+RUN CGO_ENABLED=0 go install github.com/paskozdilar/procman/cmd/procman-server@latest
 
 
 FROM debian:bullseye
 
-COPY --from=procman /go/bin/procman /go/bin/procman
+COPY --from=procman /go/bin/procman-server /go/bin/procman-server
 
 # Your build steps
 
-CMD ["/go/bin/procman", "-port=50003", "your_command", "your_command_args"]
+CMD ["/go/bin/procman-server", "-port=1337", "your_command", "your_command_args"]
 ```
+
+Then you can start and stop service by executing HTTP command no port 1337,
+e.g.:
+
+```shell
+curl http://localhost:1337/stop
+```
+
+See the [Dockerfile](./example/Dockerfile) in the example directory for a
+complete example.
 
 ## Drawbacks
 
