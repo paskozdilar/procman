@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"runtime"
 )
 
 // Action represents an action to be performed on the process manager.
@@ -78,7 +79,7 @@ func (pm *ProcMan) Run() {
 					continue
 				}
 				// Stop the process.
-				proc.Cmd.Process.Kill()
+				proc.kill()
 				<-proc.Done
 				proc.Cmd = nil
 				req.Response <- nil
@@ -90,7 +91,7 @@ func (pm *ProcMan) Run() {
 					continue
 				}
 				// Restart the process.
-				proc.Cmd.Process.Kill()
+				proc.kill()
 				<-proc.Done
 				proc.Cmd = exec.Command(pm.Cmd, pm.Args...)
 				proc.Done = make(chan error)
@@ -136,4 +137,15 @@ func (p *proc) run() {
 	}
 
 	p.Done <- p.Cmd.Wait()
+}
+
+// kill sends a signal to the process to stop it.
+// On Windows, it sends a kill signal.
+// On other platforms, it sends an interrupt signal.
+func (p *proc) kill() {
+	if runtime.GOOS == "windows" {
+		p.Cmd.Process.Signal(os.Kill)
+	} else {
+		p.Cmd.Process.Signal(os.Interrupt)
+	}
 }
