@@ -74,7 +74,7 @@ If a process spawns child processes, procman will not manage them.
 That implies that if the parent process crashes, the child processes will not be
 stopped.
 
-If the process crashes, procman will not restart it with a delay.
+If the process crashes, procman will not restart it.
 
 ## Alternatives
 
