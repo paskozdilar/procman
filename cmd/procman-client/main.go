@@ -54,7 +54,7 @@ func main() {
 	}
 
 	// Send an HTTP request to the server with the command
-	addr := fmt.Sprintf("%s:%d/", host, port, command)
+	addr := fmt.Sprintf("%s:%d/%s", host, port, command)
 	resp, err := http.Post(addr, "text/plain", nil)
 	if err != nil {
 		log.Fatalf("http error: %v", err)
